@@ -1,0 +1,74 @@
+---
+alwaysApply: true
+description: Использование context parameters в стиле ФП (Kotlin ≥ 2.0)
+---
+
+1. **Используйте context parameters вместо устаревших context receivers.**  
+   Объявляйте зависимости через `context(<name>: <Type>)` перед функцией или свойством.  
+   Пример:
+   ```kotlin
+   context(users: UserService)
+   fun outputMessage(message: String) {
+       users.log("Log: $message")
+   }
+   ```
+
+2. **Для typeclass-подобных паттернов** используйте интерфейсы и передавайте их как context parameters:
+   ```kotlin
+   interface Show<T> { fun show(value: T): String }
+
+   context(show: Show<T>)
+   fun <T> printShow(value: T) = println(show.show(value))
+   ```
+
+3. **Для нескольких зависимостей** перечисляйте их через запятую:
+   ```kotlin
+   context(logger: Logger, db: Database)
+   fun foo() { ... }
+   ```
+
+4. **Можно использовать `_` как имя context parameter,** если не требуется доступ по имени:
+   ```kotlin
+   context(_: UserService)
+   fun logWelcome() { ... }
+   ```
+
+5. **Context parameters разрешаются по типу** на месте вызова. Если в области видимости несколько подходящих значений — будет ошибка неоднозначности.  
+   Пример ошибки:
+   ```kotlin
+   val a = object : UserService { ... }
+   val b = object : UserService { ... }
+   context(a, b) { outputMessage("fail") } // Ошибка компиляции!
+   ```
+
+6. **Ограничения:**
+   - Конструкторы не могут объявлять context parameters.
+   - Свойства с context parameters не могут иметь backing field, инициализатор или delegation.
+   - Нельзя одновременно использовать `-Xcontext-receivers` и `-Xcontext-parameters` в компиляторе.
+
+7. **Не используйте context parameters для передачи мутабельного состояния.**  
+   Только для зависимостей, сервисов, typeclass-инстансов и окружения.
+
+8. **Внутри функций используйте члены контекста напрямую** (через имя, если оно задано, либо через разрешение по типу).
+
+9. **Для тестирования и мокирования** передавайте нужные реализации интерфейсов через context parameters.
+
+10. **Включайте флаг компилятора**:  
+    -Xcontext-parameters  
+    (в build.gradle.kts:  
+    ```kotlin
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs.add("-Xcontext-parameters")
+        }
+    }
+    ```
+    )
+
+11. **Не используйте устаревший синтаксис `@ContextReceivers`.**  
+    Только новый синтаксис context parameters.
+
+---
+
+**Ссылки:**  
+- [Kotlin: Context parameters](https://kotlinlang.org/docs/context-parameters.html#context-parameters-resolution) 

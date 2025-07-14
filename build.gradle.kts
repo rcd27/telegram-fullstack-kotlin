@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "2.0.0" apply false
+    kotlin("multiplatform") version "2.1.20" apply false
     id("org.jetbrains.compose") version "1.9.0-alpha03" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0" apply false
 }

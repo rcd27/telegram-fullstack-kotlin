@@ -4,8 +4,10 @@ plugins {
 
 dependencies {
     implementation(project(":backend:common"))
-    implementation("dev.inmo:tgbotapi:2.2.0")
-    implementation("io.arrow-kt:arrow-core:1.2.1")
+    implementation("dev.inmo:tgbotapi:26.1.0")
+    implementation("io.arrow-kt:arrow-core:2.0.0")
+    implementation("io.ktor:ktor-server-netty:2.3.8")
+    implementation("io.ktor:ktor-server-core:2.3.8")
     testImplementation(kotlin("test"))
 }
 

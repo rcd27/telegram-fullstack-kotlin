@@ -33,7 +33,7 @@ frontend/
 - **simbot-component-telegram** ([github.com/simple-robot/simbot-component-telegram](https://github.com/simple-robot/simbot-component-telegram)) — мультиплатформенная библиотека (JVM/JS/Native), построена на корутинах, поддерживает расширенную интеграцию и асинхронность.
 
 **Архитектурные рекомендации:**
-- Использовать Ktor или Spring Boot для webhook.
+- Использовать Ktor для webhook.
 - DDD, разделение на слои (domain, application, infrastructure, api).
 - Ошибки — через sealed class/Result/Either (Arrow).
 - Конфиг — только через env/config-файлы.
@@ -140,7 +140,7 @@ cd frontend/web
 ---
 
 - DDD, функциональный стиль, Railway Oriented Programming
-- Ошибки — только через sealed class/Result/Either
+- Ошибки — только через sealed class/Result/Either(arrow-kt)
 - e2e — must have, покрытие >80%
 - Чистый, идиоматичный Kotlin
 - Вся инфраструктура — через порты/интерфейсы

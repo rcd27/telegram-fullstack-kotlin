@@ -35,6 +35,53 @@ frontend/
 
 ---
 
+## Взаимодействие: Бот и Telegram WebApp
+
+В проекте используются две ключевые части:
+- **Бот** (backend, tgbotapi) — серверное приложение, общающееся с Telegram через Bot API.
+- **WebApp** (frontend, Compose Web) — веб-приложение, открывающееся внутри Telegram-клиента по кнопке.
+
+### Зачем WebApp интеграция с Telegram?
+- **WebApp** запускается внутри Telegram и получает от Telegram специальный контекст (`initData`), который содержит информацию о пользователе, чате и подпись Telegram (для безопасности).
+- Через [Telegram Web Apps JS API](https://core.telegram.org/bots/webapps) WebApp может:
+  - Узнать, кто его открыл (user id, имя, язык и т.д.)
+  - Управлять Telegram UI (mainButton, alerts, темы)
+  - Безопасно отправлять данные обратно боту или на backend
+- Без этой интеграции WebApp не сможет работать как Telegram Mini App: не узнает пользователя, не сможет отправить результат, не будет защищён от подделки.
+
+### Типовой сценарий работы
+1. Пользователь пишет боту → Бот отправляет кнопку "Открыть WebApp".
+2. Пользователь кликает → В Telegram открывается WebView с вашим фронтендом.
+3. WebApp получает `initData` через JS API Telegram.
+4. WebApp может отправлять данные обратно боту (через mainButton или backend).
+5. Бот получает результат и продолжает диалог.
+
+### Схема взаимодействия
+
+```mermaid
+flowchart TD
+  subgraph Telegram
+    direction TB
+    User["Пользователь<br/>(Telegram клиент)"]
+    BotAPI["Telegram Bot API"]
+    WebAppAPI["Telegram Web Apps JS API"]
+  end
+  Bot["Бот<br/>(Backend, tgbotapi)"]
+  WebApp["WebApp<br/>(Compose Web)"]
+
+  User -- "Пишет боту / жмёт кнопку" --> BotAPI
+  BotAPI -- "Передаёт сообщения боту" --> Bot
+  Bot -- "Отправляет WebApp-кнопку" --> BotAPI
+  BotAPI -- "Открывает WebApp в Telegram" --> User
+  User -- "Открывает WebApp" --> WebApp
+  WebApp -- "Получает initData, управляет UI через JS API" --> WebAppAPI
+  WebAppAPI -- "Передаёт данные о пользователе, события, initData" --> WebApp
+  WebApp -- "Отправляет результат через mainButton или на backend" --> BotAPI
+  BotAPI -- "Передаёт результат боту" --> Bot
+```
+
+---
+
 ## Запуск
 
 ### Backend (бот)
